@@ -29,7 +29,7 @@ The original study fine-tunes both multilingual and monolingual BERT-family mode
 - **BERT-en**: monolingual English BERT fine-tuned using the Whole, Semantic, and Language voxel masks.
 - **BERT-zh**: monolingual Chinese BERT fine-tuned using the same three voxel-mask regimes.
 
-All analyses operate on the hidden-state output of each Transformer block. Unless otherwise stated, each fine-tuned checkpoint is compared to the Base model from the same model family. The original fine-tuning work reports that bilingual brain-informed supervision can improve brain encoding and downstream NLP performance across within-language, cross-language, and—in multilingual models—unseen-language settings [Negi et al., 2025](https://openreview.net/forum?id=JPogehP8By).
+All analyses operate on the hidden-state output of each Transformer block. Unless otherwise stated, each fine-tuned checkpoint is compared to the Base model from the same model family. The original fine-tuning work reports that bilingual brain-informed supervision can improve brain encoding and downstream NLP performance across within-language, cross-language, and, in multilingual models, and unseen-language settings [Negi et al., 2025](https://openreview.net/forum?id=JPogehP8By).
 
 ## Interpretability analyses
 
