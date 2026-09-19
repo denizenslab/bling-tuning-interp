@@ -44,7 +44,7 @@ All analyses operate on the hidden-state output of each Transformer block. Unles
 
 ### 1. Structural probe analysis
 
-`Probe_analysis.py` evaluates whether brain-informed fine-tuning changes how syntactic dependency structure is encoded across layers. Word-piece representations are mean-pooled to word level, and ridge-regression probes are trained on frozen layer-wise representations from Universal Dependencies treebanks. The approach follows structural-probe methodology used to study representational changes during BERT fine-tuning [Merchant et al., 2020](https://arxiv.org/abs/2002.12327).
+`Probe_analysis.py` evaluates whether brain-informed fine-tuning changes how syntactic dependency structure is encoded across layers. Word-piece representations are mean-pooled to word level, and ridge-regression probes are trained on frozen layer-wise representations from Universal Dependencies treebanks. The approach follows structural-probe methodology used to study representational changes during BERT fine-tuning [Merchant et al., 2020](https://arxiv.org/abs/2004.14448).
 
 ### 2. Representation similarity analysis
 
@@ -125,7 +125,7 @@ The project is motivated in part by the activation-steering result of Schut et a
 
 - Devlin, J., Chang, M.-W., Lee, K., & Toutanova, K. (2019). [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://aclanthology.org/N19-1423/). NAACL.
 - Negi, A., Oota, S. R., Nunez-Elizalde, A. O., Gupta, M., & Deniz, F. (2025). [Brain-Informed Fine-Tuning for Improved Multilingual Understanding in Language Models](https://openreview.net/forum?id=JPogehP8By).
-- Merchant, A., Rahimtoroghi, E., Pavlick, E., & Tenney, I. (2020). [What Happens to BERT Embeddings During Fine-tuning?](https://arxiv.org/abs/2002.12327).
+- Merchant, A., Rahimtoroghi, E., Pavlick, E., & Tenney, I. (2020). [What Happens to BERT Embeddings During Fine-tuning?](https://arxiv.org/abs/2004.14448).
 - Conneau, A., Rinott, R., Lample, G., Williams, A., Bowman, S. R., Schwenk, H., & Stoyanov, V. (2018). [XNLI: Evaluating Cross-lingual Sentence Representations](https://aclanthology.org/D18-1269/). EMNLP.
 - Kassner, N., Dufter, P., & Schütze, H. (2021). [Multilingual LAMA: Investigating Knowledge in Multilingual Pretrained Language Models](https://arxiv.org/abs/2102.00894).
 - Schut, L., Gal, Y., & Farquhar, S. (2025). [Do Multilingual LLMs Think in English?](https://arxiv.org/abs/2502.15603).
