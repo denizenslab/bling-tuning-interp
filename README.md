@@ -8,7 +8,16 @@ The original brain-informed network architecture and fine-tuned weights are prov
 
 BERT is a Transformer encoder pretrained with a masked-language-model objective, producing deeply bidirectional contextual representations by conditioning each token on both its left and right context [Devlin et al., 2019](https://aclanthology.org/N19-1423/). In the original brain-informed fine-tuning framework, bilingual participants read naturalistic stories in English and Chinese while their BOLD responses were recorded. Token-level language-model representations are temporally aligned with fMRI responses using differentiable downsampling and haemodynamic delays. A voxelwise prediction head is trained to predict BOLD activity, and the resulting brain-encoding loss is backpropagated through the language model. Thus, the model is tuned to produce representations that better predict bilingual neural responses during naturalistic language comprehension [Negi et al., 2025](https://openreview.net/forum?id=JPogehP8By).
 
-The aim of this repository is to ask a mechanistic question: **what changes inside the model after bilingual brain-informed supervision?** We compare fine-tuned variants with their corresponding pretrained base models across syntax-sensitive structure, representational geometry, language-specific output routing, factual retrieval, and causal pathways through layers and attention heads.
+The aim of this work is to ask a mechanistic question: **what changes inside the model after bilingual brain-informed supervision?** We compare fine-tuned variants with their corresponding pretrained base models across syntax-sensitive structure, representational geometry, language-specific output routing, factual retrieval, and causal pathways through layers and attention heads.
+
+## Main findings
+
+Across the implemented analyses, the evidence supports the following interpretation:
+
+- Brain-informed fine-tuning is **largely non-disruptive**: dependency-structure probe performance remains close to the corresponding pretrained Base model.
+- Fine-tuning produces **layer- and language-dependent representational drift**: changes are concentrated in later layers for English settings, while Chinese settings show earlier divergence.
+- Language-selective fine-tuning can alter **language-specific probability routing**, particularly increasing Chinese-script probability mass for Chinese prompts in the relevant mBERT setting.
+- Semantic-selective English tuning can improve **out-of-distribution factual retrieval**, with the clearest gains reported for Capital and Official Language relations.
 
 ## Model variants
 
@@ -16,7 +25,7 @@ Within each model family, analyses compare four checkpoint conditions:
 
 | Variant | Fine-tuning regime | Interpretation |
 |---|---|---|
-| **Base** | No brain-informed fine-tuning; pretrained checkpoint | Reference model for all comparisons. It establishes the original representational geometry, factual-retrieval behaviour, language-token probability mass, and causal attribution profile. |
+| **Base** | No brain-informed fine-tuning; pretrained checkpoint | Reference model for all comparisons. |
 | **Whole** | Fine-tuned to predict fMRI responses from **whole-brain voxels** | Broad brain supervision. The prediction target includes all available voxels rather than a functionally selected subset. |
 | **Semantic** | Fine-tuned to predict fMRI responses from **semantically selective voxels** | Supervision is restricted to cortical voxels selected for semantic sensitivity, testing whether semantic brain signals specifically reshape language-model computation. |
 | **Language** | Fine-tuned to predict fMRI responses from **language-selective voxels** | Supervision is restricted to language-selective cortical regions, testing whether language-network signals preferentially alter linguistic representations and language-specific routing. |
@@ -47,21 +56,16 @@ All analyses operate on the hidden-state output of each Transformer block. Unles
 
 The vocabulary is partitioned into English-like and Chinese-like token subsets using Unicode-script heuristics. At every layer, the analysis measures:
 
-- English probability mass, \(p_{en}\).
-- Chinese probability mass, \(p_{zh}\).
-- Normalised language shares, such as \(p_{zh}/(p_{en}+p_{zh})\).
+- English probability mass, $p_{en}$.
+- Chinese probability mass, $p_{zh}$.
+- Normalised language shares, such as $p_{zh}/(p_{en}+p_{zh})$.
 - Correct-target probability by layer and part of speech.
 
 For two-subtoken Chinese answers, the implementation supports two adjacent mask positions and scores the answer using the geometric mean of the two target-token probabilities.
 
 ### 4. Causal tracing
 
-`CausalTracer.py` adapts causal tracing to BERT-style MLM factual retrieval, following the intervention logic used by Schut et al. (2025). We evaluate multilingual factual cloze prompts from mLAMA-style relation datasets, including **Capital**, **Official Language**, **Place of Birth**, **Continent**, and **Developer** [Kassner, Dufter, and Schütze, 2021](https://arxiv.org/abs/2102.00894). Before tracing, facts are filtered so that the Base model ranks the correct masked target among its top-10 predictions. This restricts analysis to facts that the model demonstrably knows. For each fact:
-
-1. Gaussian noise corrupts input embeddings at the subject-token span.
-2. The corrupted run establishes a baseline probability for the correct target token.
-3. One clean activation is restored at a time at a specific layer and token position.
-4. The indirect effect is the recovery in target probability relative to the corrupted baseline.
+`CausalTracer.py` adapts causal tracing to BERT-style MLM factual retrieval, following the intervention logic used by Schut et al. (2025). We evaluate multilingual factual cloze prompts from mLAMA-style relation datasets, including **Capital**, **Official Language**, **Place of Birth**, **Continent**, and **Developer** [Kassner, Dufter, and Schütze, 2021](https://arxiv.org/abs/2102.00894). Before tracing, facts are filtered so that the Base model ranks the correct masked target among its top-10 predictions. This restricts analysis to facts that the model demonstrably knows. For each fact, we measure:
 
 $$
 IE(l,t) = p_{\mathrm{patch}}^{(l,t)}(y) - p_{\mathrm{corr}}(y).
@@ -87,16 +91,7 @@ $$
 
 The project is motivated in part by the activation-steering result of Schut et al. (2025): in their multilingual LLM experiments, steering vectors computed in English were often more effective than vectors computed in the input/output language. This motivates testing whether bilingual brain-informed fine-tuning changes the directions in activation space associated with language routing or factual retrieval.
 
-**Status:** the current repository contains the logit-lens, causal-tracing, path-patching, structural-probe, and RSA implementations described above. It does not currently include a standalone steering-vector experiment script. Steering is therefore documented here as a planned extension and methodological motivation, rather than reported as a completed result.
 
-## Main findings
-
-Across the implemented analyses, the evidence supports the following interpretation:
-
-- Brain-informed fine-tuning is **largely non-disruptive**: dependency-structure probe performance remains close to the corresponding pretrained Base model.
-- Fine-tuning produces **layer- and language-dependent representational drift**: changes are concentrated in later layers for English settings, while Chinese settings show earlier divergence.
-- Language-selective fine-tuning can alter **language-specific probability routing**, particularly increasing Chinese-script probability mass for Chinese prompts in the relevant mBERT setting.
-- Semantic-selective English tuning can improve **out-of-distribution factual retrieval**, with the clearest gains reported for Capital and Official Language relations.
 
 ## Repository structure
 
