@@ -35,28 +35,15 @@ All analyses operate on the hidden-state output of each Transformer block. Unles
 
 ### 1. Structural probe analysis
 
-`Probe_analysis_clean.py` evaluates whether brain-informed fine-tuning changes how syntactic dependency structure is encoded across layers. Word-piece representations are mean-pooled to word level, and ridge-regression probes are trained on frozen layer-wise representations from Universal Dependencies treebanks.
-
-For every layer, the analysis evaluates:
-
-- **Root accuracy**: whether the word with minimum predicted depth is the gold dependency root.
-- **Depth Spearman correlation**: rank correlation between gold and predicted depth-to-root.
-- **Distance Spearman correlation**: rank correlation between gold and predicted pairwise dependency distances.
-- **UUAS**: overlap between gold dependency edges and edges in the minimum spanning tree induced by predicted distances.
-
-The approach follows structural-probe methodology used to study representational changes during BERT fine-tuning [Merchant et al., 2020](https://arxiv.org/abs/2002.12327). In this project, syntactic probe curves remain broadly similar to their corresponding Base models, indicating that brain-informed fine-tuning is largely non-disruptive to dependency-sensitive structure.
+`Probe_analysis.py` evaluates whether brain-informed fine-tuning changes how syntactic dependency structure is encoded across layers. Word-piece representations are mean-pooled to word level, and ridge-regression probes are trained on frozen layer-wise representations from Universal Dependencies treebanks. The approach follows structural-probe methodology used to study representational changes during BERT fine-tuning [Merchant et al., 2020](https://arxiv.org/abs/2002.12327).
 
 ### 2. Representation similarity analysis
 
-`Rep_Analysis_clean.py` quantifies layer-wise representational drift between Base and fine-tuned models using representational similarity analysis (RSA). The analysis uses XNLI premises and hypotheses, separately stratified by contradiction, neutral, and entailment labels [Conneau et al., 2018](https://aclanthology.org/D18-1269/).
-
-For each sentence and layer, token states are mean-pooled into a sentence representation. For each model, the code constructs a pairwise cosine-similarity matrix over sentences, vectorises its upper triangle, and computes Spearman correlation between the corresponding vectors from the Base and fine-tuned model. Higher RSA indicates more similar representational geometry.
-
-The observed pattern is language dependent: drift is concentrated in later layers for English monolingual models and English-trained mBERT, while Chinese settings show divergence earlier in the network. This supports the interpretation that brain-informed tuning modifies internal geometry without globally overwriting the pretrained representation space.
+`Rep_Analysis.py` quantifies layer-wise representational drift between Base and fine-tuned models using representational similarity analysis (RSA). The analysis uses XNLI premises and hypotheses, separately stratified by contradiction, neutral, and entailment labels [Conneau et al., 2018](https://aclanthology.org/D18-1269/).
 
 ### 3. Logit-lens analysis
 
-`logitlense_clean.py` adapts the multilingual routing-style logit lens of [Schut, Gal, and Farquhar (2025)](https://arxiv.org/abs/2502.15603) to BERT-style masked language models. For POS-controlled English and Chinese cloze prompts, the hidden state at each `[MASK]` position is projected through the model’s MLM head.
+`logitlense.py` adapts the multilingual routing-style logit lens of [Schut, Gal, and Farquhar (2025)](https://arxiv.org/abs/2502.15603) to BERT-style masked language models. For POS-controlled English and Chinese cloze prompts, the hidden state at each `[MASK]` position is projected through the model’s MLM head.
 
 The vocabulary is partitioned into English-like and Chinese-like token subsets using Unicode-script heuristics. At every layer, the analysis measures:
 
@@ -65,40 +52,36 @@ The vocabulary is partitioned into English-like and Chinese-like token subsets u
 - Normalised language shares, such as \(p_{zh}/(p_{en}+p_{zh})\).
 - Correct-target probability by layer and part of speech.
 
-For two-subtoken Chinese answers, the implementation supports two adjacent mask positions and scores the answer using the geometric mean of the two target-token probabilities. The analysis shows that language-selective fine-tuning can shift Chinese-script probability mass for Chinese prompts. The clearest target-probability changes occur for selected POS categories, notably adjectives and conjunctions, while many categories remain close to Base.
+For two-subtoken Chinese answers, the implementation supports two adjacent mask positions and scores the answer using the geometric mean of the two target-token probabilities.
 
 ### 4. Causal tracing
 
-`CausalTracer_clean.py` adapts causal tracing to BERT-style MLM factual retrieval, following the intervention logic used by Schut et al. (2025). We evaluate multilingual factual cloze prompts from mLAMA-style relation datasets, including **Capital**, **Official Language**, **Place of Birth**, **Continent**, and **Developer** [Kassner, Dufter, and Schütze, 2021](https://arxiv.org/abs/2102.00894).
-
-Before tracing, facts are filtered so that the Base model ranks the correct masked target among its top-10 predictions. This restricts analysis to facts that the model demonstrably knows. For each fact:
+`CausalTracer.py` adapts causal tracing to BERT-style MLM factual retrieval, following the intervention logic used by Schut et al. (2025). We evaluate multilingual factual cloze prompts from mLAMA-style relation datasets, including **Capital**, **Official Language**, **Place of Birth**, **Continent**, and **Developer** [Kassner, Dufter, and Schütze, 2021](https://arxiv.org/abs/2102.00894). Before tracing, facts are filtered so that the Base model ranks the correct masked target among its top-10 predictions. This restricts analysis to facts that the model demonstrably knows. For each fact:
 
 1. Gaussian noise corrupts input embeddings at the subject-token span.
 2. The corrupted run establishes a baseline probability for the correct target token.
 3. One clean activation is restored at a time at a specific layer and token position.
 4. The indirect effect is the recovery in target probability relative to the corrupted baseline.
 
-\[
+$$
 IE(l,t) = p_{\mathrm{patch}}^{(l,t)}(y) - p_{\mathrm{corr}}(y).
-\]
+$$
 
-This reveals where clean information can causally restore factual predictions. In the reported experiments, semantic-selective English tuning improved out-of-distribution factual retrieval, especially for Capital and Official Language relations, but tracing did not isolate one stable, universal layer-level mechanism.
+This reveals where clean information can causally restore factual predictions.
 
 ### 5. Path patching / attention-head restoration
 
-`PathPatching_clean.py` performs clean-to-corrupted head restoration to identify attention heads that causally carry information from a subject span to a masked target. The method follows the causal intervention principle of path patching and is related to multilingual structural analyses of language models [Zhang et al., 2024](https://arxiv.org/abs/2405.01573).
+`PathPatching.py` performs clean-to-corrupted head restoration to identify attention heads that causally carry information from a subject span to a masked target. The method follows the causal intervention principle of path patching and is related to multilingual structural analyses of language models [Zhang et al., 2024](https://arxiv.org/abs/2405.01573).
 
 For each prompt, the code caches clean attention-head outputs, corrupts the subject embeddings with Gaussian noise, and restores one attention head at a time during the corrupted forward pass. A head’s restoration score is the improvement in either correct-target probability or a language-mass statistic:
 
-\[
+$$
 \Delta_{target}(l,h) = p_{\mathrm{patch}}^{(l,h)}(y) - p_{\mathrm{corr}}(y).
-\]
+$$
 
-\[
+$$
 \Delta_{mass}(l,h) = \mathrm{share}_{\mathrm{patch}}^{(l,h)} - \mathrm{share}_{\mathrm{corr}}.
-\]
-
-Results suggest a **distributed redistribution of head importance**, rather than the emergence of one invariant “brain-tuned” circuit. In language-selective mBERT, conjunctions and adpositions show positive changes in target reconstruction and Chinese-share restoration across multiple heads, but the effect is not dominated by a single head.
+$$
 
 ### 6. Steering-vector analysis
 
@@ -114,7 +97,6 @@ Across the implemented analyses, the evidence supports the following interpretat
 - Fine-tuning produces **layer- and language-dependent representational drift**: changes are concentrated in later layers for English settings, while Chinese settings show earlier divergence.
 - Language-selective fine-tuning can alter **language-specific probability routing**, particularly increasing Chinese-script probability mass for Chinese prompts in the relevant mBERT setting.
 - Semantic-selective English tuning can improve **out-of-distribution factual retrieval**, with the clearest gains reported for Capital and Official Language relations.
-- Causal tracing and path patching favour **redistribution** of causal contribution across layers and heads over discovery of a single universal circuit.
 
 ## Repository structure
 
