@@ -89,7 +89,7 @@ $$
 
 ### 6. Steering-vector analysis
 
-The project is motivated in part by the activation-steering result of Schut et al. (2025): in their multilingual LLM experiments, steering vectors computed in English were often more effective than vectors computed in the input/output language. This motivates testing whether bilingual brain-informed fine-tuning changes the directions in activation space associated with language routing or factual retrieval.
+`BERTSteeringAnalyzer.py` is motivated in part by the activation-steering result of Schut et al. (2025): in their multilingual LLM experiments, steering vectors computed in English were often more effective than vectors computed in the input/output language. This motivates testing whether bilingual brain-informed fine-tuning changes the directions in activation space associated with language routing or factual retrieval.
 
 
 
@@ -102,7 +102,8 @@ The project is motivated in part by the activation-steering result of Schut et a
 │   ├── logitlense.py            # POS-controlled multilingual logit lens
 │   ├── PathPatching.py          # Attention-head restoration and mass attribution
 │   ├── Probe_analysis.py        # Structural probes and model-weight comparisons
-│   └── Rep_Analysis.py          # RSA and XNLI representation analyses
+│   └── Rep_Analysis.py          # RSA and XNLI representation analyses 
+│   ├── BERTSteeringAnalyzer.py  # Steering Vector Analysis
 │
 ├── notebooks/
 │   ├── Causal Tracing.ipynb
