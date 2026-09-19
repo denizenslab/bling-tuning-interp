@@ -113,5 +113,5 @@ The project is motivated in part by the activation-steering result of Schut et a
 - Conneau, A., Rinott, R., Lample, G., Williams, A., Bowman, S. R., Schwenk, H., & Stoyanov, V. (2018). [XNLI: Evaluating Cross-lingual Sentence Representations](https://aclanthology.org/D18-1269/). EMNLP.
 - Kassner, N., Dufter, P., & Schütze, H. (2021). [Multilingual LAMA: Investigating Knowledge in Multilingual Pretrained Language Models](https://arxiv.org/abs/2102.00894).
 - Schut, L., Gal, Y., & Farquhar, S. (2025). [Do Multilingual LLMs Think in English?](https://arxiv.org/abs/2502.15603).
-- Zhang, R., Yu, Q., Zang, M., Eickhoff, C., & Pavlick, E. (2024). *Structural Similarities and Differences in Multilingual Language Modeling.*
+- Zhang, R., Yu, Q., Zang, M., Eickhoff, C., & Pavlick, E. (2024). [The Same But Different: Structural Similarities and Differences in Multilingual Language Modeling](https://arxiv.org/abs/2410.09223)
 - Nivre, J., et al. (2016). [Universal Dependencies v1: A Multilingual Treebank Collection](https://aclanthology.org/L16-1262/).
