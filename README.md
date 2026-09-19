@@ -2,7 +2,7 @@
 
 This repository contains the analysis code for the lab rotation **“Interpretability Analysis of Bilingual Brain-Informed Fine-Tuning in BERT.”** It investigates how bilingual, fMRI-guided fine-tuning changes the internal representations and causal computations of BERT-style masked language models.
 
-The original brain-informed network architecture and fine-tuned weights are provided by the [denizenslab/brain-informed-fine-tuning](https://github.com/denizenslab/brain-informed-fine-tuning) project. This repository does **not** reimplement the original fMRI training pipeline. Instead, it provides a post-hoc interpretability toolkit for analysing the released base and brain-informed fine-tuned checkpoints.
+The original brain-informed network architecture and fine-tuned weights are provided by the [denizenslab/brain-informed-fine-tuning](https://github.com/denizenslab/brain-informed-fine-tuning) project. 
 
 ## Overview
 
