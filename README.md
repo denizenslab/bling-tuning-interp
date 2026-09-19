@@ -97,13 +97,29 @@ The project is motivated in part by the activation-steering result of Schut et a
 
 ```text
 .
-├── CausalTracer_clean.py       # Activation restoration / causal tracing
-├── logitlense_clean.py         # POS-controlled multilingual logit lens
-├── PathPatching_clean.py       # Attention-head restoration and mass attribution
-├── Probe_analysis_clean.py     # Structural probes and model-weight comparisons
-├── Rep_Analysis_clean.py       # RSA and XNLI representation analyses
-└── README.md
+├── src/
+│   ├── CausalTracer.py          # Activation restoration / causal tracing
+│   ├── logitlense.py            # POS-controlled multilingual logit lens
+│   ├── PathPatching.py          # Attention-head restoration and mass attribution
+│   ├── Probe_analysis.py        # Structural probes and model-weight comparisons
+│   └── Rep_Analysis.py          # RSA and XNLI representation analyses
+│
+├── notebooks/
+│   ├── Causal Tracing.ipynb
+│   ├── Logit Lense.ipynb
+│   ├── Path Patching Fact.ipynb
+│   ├── Path Patching Morphology.ipynb
+│   └── Path Patching POS Mass.ipynb
+│   └── Steering Vector Facts.ipynb
+│   └── Steering Vector POS.ipynb
+│   └── Steering Vector Similarity.ipynb
+│   └── Structural Probing and RSA.ipynb
+│
+├── README.md
 ```
+
+- **`src/`** contains the reusable Python implementations of the interpretability methods.
+- **`notebooks/`** contains the experiment, result-generation, visualisation, and analysis notebooks.
 
 ## References
 
